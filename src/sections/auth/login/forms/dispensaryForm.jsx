@@ -1,230 +1,116 @@
-// import React, { useState } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Web3 from 'web3';
+import DispensaryRegistration from "../../../../build/contracts/DispensaryRegistration.json";
 
-// const DispensaryForm = () => {
-//     const [formData, setFormData] = useState({
-//         dispensaryName: '',
-//         ownerName: '',
-//         licenseNumber: '',
-//         address: '',
-//         city: '',
-//         state: '',
-//         zipCode: '',
-//         phoneNumber: '',
-//         email: '',
-//         website: '',
-//         openingHours: '',
-//         closingHours: '',
-//         services: [],
-//         description: '',
-//     });
+function DispensaryLogin({ setIsRegistered, setDispensaryDetails }) {
+    const [dispensaryCredentials, setDispensaryCredentials] = useState({
+        licenseNumber: '',
+        password: '',
+    });
 
-//     const [errors, setErrors] = useState({});
+    const navigate = useNavigate();
 
-//     const handleChange = (e) => {
-//         const { name, value } = e.target;
-//         setFormData({ ...formData, [name]: value });
-//     };
+    const handleDispensarySubmit = async (e) => {
+        e.preventDefault();
 
-//     const handleCheckboxChange = (e) => {
-//         const { value, checked } = e.target;
-//         setFormData((prevState) => {
-//             const services = checked
-//                 ? [...prevState.services, value]
-//                 : prevState.services.filter((service) => service !== value);
-//             return { ...prevState, services };
-//         });
-//     };
+        const dispensaryLicenceNumber = dispensaryCredentials.licenseNumber;
+        const dispensaryPassword = dispensaryCredentials.password;
 
-//     const validateForm = () => {
-//         const newErrors = {};
-//         if (!formData.dispensaryName) newErrors.dispensaryName = 'Dispensary name is required';
-//         if (!formData.ownerName) newErrors.ownerName = 'Owner name is required';
-//         if (!formData.licenseNumber) newErrors.licenseNumber = 'License number is required';
-//         if (!formData.address) newErrors.address = 'Address is required';
-//         if (!formData.city) newErrors.city = 'City is required';
-//         if (!formData.state) newErrors.state = 'State is required';
-//         if (!formData.zipCode) newErrors.zipCode = 'Zip code is required';
-//         if (!formData.phoneNumber) newErrors.phoneNumber = 'Phone number is required';
-//         if (!formData.email) newErrors.email = 'Email is required';
-//         if (!formData.openingHours) newErrors.openingHours = 'Opening hours are required';
-//         if (!formData.closingHours) newErrors.closingHours = 'Closing hours are required';
-//         setErrors(newErrors);
-//         return Object.keys(newErrors).length === 0;
-//     };
+        try {
+            console.log(`Starting login for Business License Number: ${dispensaryLicenceNumber}`);
 
-//     const handleSubmit = (e) => {
-//         e.preventDefault();
-//         if (validateForm()) {
-//             console.log('Form submitted:', formData);
-//             alert('Form submitted successfully!');
-//         }
-//     };
+            const web3 = new Web3(window.ethereum);
+            const networkId = await web3.eth.net.getId();
+            const deployedNetwork = DispensaryRegistration.networks[networkId];
+            const contract = new web3.eth.Contract(
+                DispensaryRegistration.abi,
+                deployedNetwork && deployedNetwork.address
+            );
 
-//     return (
-//         <form onSubmit={handleSubmit} className="dispensary-form">
-//             <h2>Dispensary Registration Form</h2>
-//             <div>
-//                 <label>Dispensary Name:</label>
-//                 <input
-//                     type="text"
-//                     name="dispensaryName"
-//                     value={formData.dispensaryName}
-//                     onChange={handleChange}
-//                 />
-//                 {errors.dispensaryName && <span className="error">{errors.dispensaryName}</span>}
-//             </div>
-//             <div>
-//                 <label>Owner Name:</label>
-//                 <input
-//                     type="text"
-//                     name="ownerName"
-//                     value={formData.ownerName}
-//                     onChange={handleChange}
-//                 />
-//                 {errors.ownerName && <span className="error">{errors.ownerName}</span>}
-//             </div>
-//             <div>
-//                 <label>License Number:</label>
-//                 <input
-//                     type="text"
-//                     name="licenseNumber"
-//                     value={formData.licenseNumber}
-//                     onChange={handleChange}
-//                 />
-//                 {errors.licenseNumber && <span className="error">{errors.licenseNumber}</span>}
-//             </div>
-//             <div>
-//                 <label>Address:</label>
-//                 <input
-//                     type="text"
-//                     name="address"
-//                     value={formData.address}
-//                     onChange={handleChange}
-//                 />
-//                 {errors.address && <span className="error">{errors.address}</span>}
-//             </div>
-//             <div>
-//                 <label>City:</label>
-//                 <input
-//                     type="text"
-//                     name="city"
-//                     value={formData.city}
-//                     onChange={handleChange}
-//                 />
-//                 {errors.city && <span className="error">{errors.city}</span>}
-//             </div>
-//             <div>
-//                 <label>State:</label>
-//                 <input
-//                     type="text"
-//                     name="state"
-//                     value={formData.state}
-//                     onChange={handleChange}
-//                 />
-//                 {errors.state && <span className="error">{errors.state}</span>}
-//             </div>
-//             <div>
-//                 <label>Zip Code:</label>
-//                 <input
-//                     type="text"
-//                     name="zipCode"
-//                     value={formData.zipCode}
-//                     onChange={handleChange}
-//                 />
-//                 {errors.zipCode && <span className="error">{errors.zipCode}</span>}
-//             </div>
-//             <div>
-//                 <label>Phone Number:</label>
-//                 <input
-//                     type="text"
-//                     name="phoneNumber"
-//                     value={formData.phoneNumber}
-//                     onChange={handleChange}
-//                 />
-//                 {errors.phoneNumber && <span className="error">{errors.phoneNumber}</span>}
-//             </div>
-//             <div>
-//                 <label>Email:</label>
-//                 <input
-//                     type="email"
-//                     name="email"
-//                     value={formData.email}
-//                     onChange={handleChange}
-//                 />
-//                 {errors.email && <span className="error">{errors.email}</span>}
-//             </div>
-//             <div>
-//                 <label>Website:</label>
-//                 <input
-//                     type="text"
-//                     name="website"
-//                     value={formData.website}
-//                     onChange={handleChange}
-//                 />
-//             </div>
-//             <div>
-//                 <label>Opening Hours:</label>
-//                 <input
-//                     type="time"
-//                     name="openingHours"
-//                     value={formData.openingHours}
-//                     onChange={handleChange}
-//                 />
-//                 {errors.openingHours && <span className="error">{errors.openingHours}</span>}
-//             </div>
-//             <div>
-//                 <label>Closing Hours:</label>
-//                 <input
-//                     type="time"
-//                     name="closingHours"
-//                     value={formData.closingHours}
-//                     onChange={handleChange}
-//                 />
-//                 {errors.closingHours && <span className="error">{errors.closingHours}</span>}
-//             </div>
-//             <div>
-//                 <label>Services Offered:</label>
-//                 <div>
-//                     <label>
-//                         <input
-//                             type="checkbox"
-//                             value="Delivery"
-//                             checked={formData.services.includes('Delivery')}
-//                             onChange={handleCheckboxChange}
-//                         />
-//                         Delivery
-//                     </label>
-//                     <label>
-//                         <input
-//                             type="checkbox"
-//                             value="In-Store Pickup"
-//                             checked={formData.services.includes('In-Store Pickup')}
-//                             onChange={handleCheckboxChange}
-//                         />
-//                         In-Store Pickup
-//                     </label>
-//                     <label>
-//                         <input
-//                             type="checkbox"
-//                             value="Consultation"
-//                             checked={formData.services.includes('Consultation')}
-//                             onChange={handleCheckboxChange}
-//                         />
-//                         Consultation
-//                     </label>
-//                 </div>
-//             </div>
-//             <div>
-//                 <label>Description:</label>
-//                 <textarea
-//                     name="description"
-//                     value={formData.description}
-//                     onChange={handleChange}
-//                 />
-//             </div>
-//             <button type="submit">Submit</button>
-//         </form>
-//     );
-// };
+            console.log("Checking if dispensary is registered...");
+            const isRegisteredResult = await contract.methods
+                .isDispensaryRegistered(dispensaryLicenceNumber)
+                .call();
+            console.log("Is Registered:", isRegisteredResult);
 
-// export default DispensaryForm;
+            setIsRegistered(isRegisteredResult);
+
+            if (isRegisteredResult) {
+                console.log("Dispensary is registered, validating password...");
+                const isValidPassword = await contract.methods
+                    .validatePassword(dispensaryLicenceNumber, dispensaryPassword)
+                    .call();
+                console.log("Is Valid Password:", isValidPassword);
+
+                if (isValidPassword) {
+                    const fetchDispensaryDetails = await contract.methods
+                        .getDispensaryCredentials(dispensaryLicenceNumber)
+                        .call();
+
+                    setDispensaryDetails(fetchDispensaryDetails);
+                    console.log("Dispensary details:", fetchDispensaryDetails);
+                    console.log('Login successful');
+                    console.log('Redirecting....');
+                    navigate("/dispensary/" + dispensaryLicenceNumber);
+                } else {
+                    console.log("Password validation failed");
+                    alert("Incorrect password");
+                }
+            } else {
+                console.log("Dispensary not registered");
+                alert("Diagnostic not registered");
+            }
+        } catch (error) {
+            console.error("Error during login process:", error);
+            alert("An error occurred while checking registration.");
+        }
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setDispensaryCredentials((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    return (
+        <form onSubmit={handleDispensarySubmit} className="space-y-4">
+            <div className="relative">
+                <input
+                    type="text"
+                    name="licenseNumber"
+                    value={dispensaryCredentials.licenseNumber}
+                    onChange={handleInputChange}
+                    placeholder="Business License Number"
+                    className="w-full px-7 py-3 rounded-full bg-gray-100 border-0 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-gray-200 focus:outline-none"
+                />
+            </div>
+
+            <div className="relative">
+                <input
+                    type="password"
+                    name="password"
+                    value={dispensaryCredentials.password}
+                    onChange={handleInputChange}
+                    placeholder="Password"
+                    className="w-full px-7 py-3 rounded-full bg-gray-100 border-0 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-gray-200 focus:outline-none"
+                />
+            </div>
+
+            <div>
+                <button type="submit" className="group w-full mt-5 bg-[#1a3235] text-white px-4 py-3 rounded-full font-albulaBold hover:bg-[#2d555b] focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all ease-in-out duration-200">
+                    <div className="flex items-center justify-center relative">
+                        <span className="absolute"> Login </span>
+                        <svg className="w-5 h-5 ml-16 relative transform transition-all duration-200 group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </div>
+                </button>
+            </div>
+        </form>
+    );
+}
+
+export default DispensaryLogin;
