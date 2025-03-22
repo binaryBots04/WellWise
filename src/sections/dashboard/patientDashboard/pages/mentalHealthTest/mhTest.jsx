@@ -224,9 +224,9 @@ function PatientMentalHealthDashboard() {
                     )}
 
                     <div className="h-full w-full">
-                        {currentStep === 1 && <ChildhoodSection step={setCurrentStep} patientDetails={patient} tID={testID} />}
-                        {currentStep === 2 && <PHQ9Section step={setCurrentStep} patientDetails={patient} tID={testID}/>}
-                        {currentStep === 3 && <SentimentAnalysis step={setCurrentStep} patientDetails={patient} tID={testID} submitVideo={handleFinish}/>}
+                        {/* {currentStep === 1 && <ChildhoodSection step={setCurrentStep} patientDetails={patient} tID={testID} />}
+                        {currentStep === 2 && <PHQ9Section step={setCurrentStep} patientDetails={patient} tID={testID}/>} */}
+                        {currentStep === 1 && <SentimentAnalysis step={setCurrentStep} patientDetails={patient} tID={testID} submitVideo={handleFinish}/>}
                     </div>
                 </div>
             </div>
