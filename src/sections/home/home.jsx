@@ -187,7 +187,7 @@ function Home() {
                                     {member.role}
                                 </h3>
 
-                                <p className="text-gray-500 font-albulaRegular text-sm leading-relaxed line-clamp-3">
+                                <p className="text-gray-500 font-albulaRegular text-sm leading-relaxed line-clamp-6">
                                     {member.description}
                                 </p>
                             </div>
